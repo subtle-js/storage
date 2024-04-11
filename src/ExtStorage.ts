@@ -1,8 +1,8 @@
 import { SubtleStorage } from "./SubtleStorage";
-import { DefinedStorageContainer } from "./DefinedStorageContainer";
+import { DefinedStorageContainer } from "./internal/DefinedStorageContainer";
 import { GenericStorageContainer } from "./GenericStorageContainer";
 import { StorageContainerInterface } from "./interfaces/StorageContainerInterface";
-import { InternalStorage } from "./InternalStorage";
+import { InternalStorage } from "./internal/InternalStorage";
 
 interface ExtStorageInterface {
     /**

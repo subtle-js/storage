@@ -1,4 +1,4 @@
-import { StorageContainerInterface } from "./interfaces/StorageContainerInterface"
+import { StorageContainerInterface } from "../interfaces/StorageContainerInterface"
 
 export class DefinedStorageContainer implements StorageContainerInterface {
     constructor(private definition: StorageContainerInterface) {

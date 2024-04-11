@@ -1,4 +1,4 @@
-import { SubtleStorage } from "./SubtleStorage"
+import { SubtleStorage } from "../SubtleStorage"
 import { __SUBTLEJS_AUTH_NAME, __SUBTLEJS_AUTH_VERSION } from "./package"
 
 export class InternalStorage {
