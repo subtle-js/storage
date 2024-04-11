@@ -7,17 +7,21 @@ export interface GenericStorageContainerInterface extends GetItemMethodContract,
 export class GenericStorageContainer implements GenericStorageContainerInterface {
     constructor(public storage: Storage) {}
 
-    getItem<T = any>(key: string): Promise<T | null> {
-        return Promise.resolve<T>(this.storage.getItem(key) as any)
+    async getItem<T = any>(key: string): Promise<T | null> {
+        const item = this.storage.getItem(key)
+        return item as T
     }
 
-    setItem<T = any>(key: string, value: T): Promise<T | null> {
-        return Promise.resolve<T>(this.storage.setItem(key, value as string) as any)
+    async setItem<T = any>(key: string, value: T): Promise<T | null> {
+        this.storage.setItem(key, value as string)
+        return this.getItem(key)
     }
 
     async removeItem<T = any>(key: string): Promise<T | null> {
         const item = await this.getItem(key)
-        this.storage.removeItem(key)
+        if (item) {
+            this.storage.removeItem(key)
+        }
         return item
     }
 }
