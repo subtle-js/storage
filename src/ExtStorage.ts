@@ -2,6 +2,7 @@ import { SubtleStorage } from "./SubtleStorage";
 import { DefinedStorageContainer } from "./DefinedStorageContainer";
 import { GenericStorageContainer } from "./GenericStorageContainer";
 import { StorageContainerInterface } from "./interfaces/StorageContainerInterface";
+import { InternalStorage } from "./InternalStorage";
 
 interface ExtStorageInterface {
     /**
@@ -19,12 +20,7 @@ interface ExtStorageInterface {
     defineStorageContainer(definition: StorageContainerInterface): StorageContainerInterface
 }
 
-export class ExtStorage implements ExtStorageInterface {
-    /**
-     * A read-only property returns a `SubtleStorage` which can then be used to perform subtle storage operations.
-     */
-    public subtle = new SubtleStorage() as Readonly<SubtleStorage>
-
+export class ExtStorage extends InternalStorage implements ExtStorageInterface {
     public createGenericStorageContainer(storage: Storage) {
         return new GenericStorageContainer(storage)
     }
