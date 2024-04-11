@@ -1,0 +1,37 @@
+{
+  "name": "@subtle-js/storage",
+  "version": "0.1.0-alpha.1",
+  "description": "The `Storage` interface provides a set of methods to perform storage operations.",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "rimraf dist types",
+    "build": "run-s build:*",
+    "build:tsc": "tsc --outDir dist",
+    "build:declaration": "tsc --outDir types --declaration --emitDeclarationOnly"
+  },
+  "keywords": [
+    "subtle-js",
+    "storage"
+  ],
+  "author": "@subtle-js <https://github.com/subtle-js>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/subtle-js/storage.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.4"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public"
+  }
+}
