@@ -5,7 +5,9 @@ import { RemoveItemMethodContract } from "./contracts/RemoveItemMethodContract";
 export interface GenericStorageContainerInterface extends GetItemMethodContract, SetItemMethodContract, RemoveItemMethodContract { }
 
 export class GenericStorageContainer implements GenericStorageContainerInterface {
-    constructor(public storage: Storage) {}
+    constructor(private storage: Storage) {
+        // ...
+    }
 
     async getItem<T = any>(key: string): Promise<T | null> {
         const item = this.storage.getItem(key)
