@@ -1,4 +1,5 @@
 import { SubtleStorage } from "./SubtleStorage";
+import { DefinedStorageContainer } from "./DefinedStorageContainer";
 import { GenericStorageContainer } from "./GenericStorageContainer";
 import { StorageContainerInterface } from "./interfaces/StorageContainerInterface";
 
@@ -29,25 +30,6 @@ export class ExtStorage implements ExtStorageInterface {
     }
 
     public defineStorageContainer(definition: StorageContainerInterface): StorageContainerInterface {
-        return {
-            async getItem(key) {
-                if (!definition.getItem) {
-                    return Promise.reject(new Error('[StorageContainerInterface]: GetItem method is not implemented.'))
-                }
-                return definition.getItem(key)
-            },
-            setItem(key, value) {
-                if (!definition.setItem) {
-                    return Promise.reject(new Error('[StorageContainerInterface]: SetItem method is not implemented.'))
-                }
-                return definition.setItem(key, value)
-            },
-            removeItem(key) {
-                if (!definition.removeItem) {
-                    return Promise.reject(new Error('[StorageContainerInterface]: RemoveItem method is not implemented.'))
-                }
-                return definition.removeItem(key)
-            },
-        }
+        return new DefinedStorageContainer(definition)
     }
 }
