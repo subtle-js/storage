@@ -21,7 +21,7 @@ interface SandboxStorageInterface {
      * @param storage 
      * @returns 
      */
-    createSecureStorageContainer(cryptoKey: CryptoKey | CryptoKeyPair, container: StorageContainerInterface): SecureStorageContainer
+    createSecureStorageContainer(keypair: CryptoKeyPair, container: StorageContainerInterface): SecureStorageContainer
 
     /**
      * Define a new instance of `StorageContainerInterface` class.
@@ -36,11 +36,11 @@ export class SandboxStorage extends InternalStorage implements SandboxStorageInt
         return new GenericStorageContainer(storage)
     }
 
-    public createSecureStorageContainer(cryptoKey: CryptoKey | CryptoKeyPair, container: StorageContainerInterface) {
+    public createSecureStorageContainer(keypair: CryptoKeyPair, container: StorageContainerInterface) {
         if (!SubtleStorage.isSecureContext()) {
             throw new Error("[SubtleStorage]: SecureStorageContainer is only available in secure contexts!")
         }
-        return new SecureStorageContainer(cryptoKey, container)
+        return new SecureStorageContainer(keypair, container)
     }
 
     public defineStorageContainer(definition: StorageContainerInterface): StorageContainerInterface {
