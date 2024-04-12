@@ -1,10 +1,6 @@
-import { GetItemMethodContract } from "./contracts/GetItemMethodContract";
-import { SetItemMethodContract } from "./contracts/SetItemMethodContract";
-import { RemoveItemMethodContract } from "./contracts/RemoveItemMethodContract";
+import { StorageContainerInterface } from "./interfaces";
 
-export interface GenericStorageContainerInterface extends GetItemMethodContract, SetItemMethodContract, RemoveItemMethodContract { }
-
-export class GenericStorageContainer implements GenericStorageContainerInterface {
+export class GenericStorageContainer implements StorageContainerInterface {
     constructor(private storage: Storage) {
         // ...
     }

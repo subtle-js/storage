@@ -3,6 +3,7 @@ import { DefinedStorageContainer } from "./internal/DefinedStorageContainer";
 import { GenericStorageContainer } from "./GenericStorageContainer";
 import { StorageContainerInterface } from "./interfaces/StorageContainerInterface";
 import { InternalStorage } from "./internal/InternalStorage";
+import { SecureStorageContainer } from "./SecureStorageContainer";
 
 interface ExtStorageInterface {
     /**
@@ -10,7 +11,17 @@ interface ExtStorageInterface {
      * @param storage 
      * @returns 
      */
+
     createGenericStorageContainer(storage: Storage): GenericStorageContainer
+    /**
+     * Create a new instance of `SecureStorageContainer` class.
+     * 
+     * Available only in secure contexts.
+     * 
+     * @param storage 
+     * @returns 
+     */
+    createSecureStorageContainer(cryptoKey: CryptoKey | CryptoKeyPair, container: StorageContainerInterface): SecureStorageContainer
 
     /**
      * Define a new instance of `StorageContainerInterface` class.
@@ -23,6 +34,13 @@ interface ExtStorageInterface {
 export class ExtStorage extends InternalStorage implements ExtStorageInterface {
     public createGenericStorageContainer(storage: Storage) {
         return new GenericStorageContainer(storage)
+    }
+
+    public createSecureStorageContainer(cryptoKey: CryptoKey | CryptoKeyPair, container: StorageContainerInterface) {
+        if (!SubtleStorage.isSecureContext()) {
+            throw new Error("[SubtleStorage]: SecureStorageContainer is only available in secure contexts!")
+        }
+        return new SecureStorageContainer(cryptoKey, container)
     }
 
     public defineStorageContainer(definition: StorageContainerInterface): StorageContainerInterface {

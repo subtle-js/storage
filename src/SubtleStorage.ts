@@ -27,15 +27,19 @@ interface SubtleStorageInterface {
 }
 
 export class SubtleStorage implements SubtleStorageInterface {
-    getItem<T = any>(container: GetItemMethodContract, key: string): Promise<T | null> {
+    public getItem<T = any>(container: GetItemMethodContract, key: string): Promise<T | null> {
         return container.getItem<T>(key)
     }
 
-    setItem<T = any>(container: SetItemMethodContract, key: string, value: T): Promise<T | null> {
+    public setItem<T = any>(container: SetItemMethodContract, key: string, value: T): Promise<T | null> {
         return container.setItem<T>(key, value)
     }
 
-    removeItem<T = any>(container: RemoveItemMethodContract, key: string): Promise<T | null> {
+    public removeItem<T = any>(container: RemoveItemMethodContract, key: string): Promise<T | null> {
         return container.removeItem<T>(key)
+    }
+
+    static isSecureContext() {
+        return (window || { isSecureContext: true }).isSecureContext
     }
 }
