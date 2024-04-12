@@ -5,7 +5,7 @@ import { StorageContainerInterface } from "./interfaces/StorageContainerInterfac
 import { InternalStorage } from "./internal/InternalStorage";
 import { SecureStorageContainer } from "./SecureStorageContainer";
 
-interface ExtStorageInterface {
+interface SandboxStorageInterface {
     /**
      * Create a new instance of `GenericStorageContainer` class.
      * @param storage 
@@ -31,7 +31,7 @@ interface ExtStorageInterface {
     defineStorageContainer(definition: StorageContainerInterface): StorageContainerInterface
 }
 
-export class ExtStorage extends InternalStorage implements ExtStorageInterface {
+export class SandboxStorage extends InternalStorage implements SandboxStorageInterface {
     public createGenericStorageContainer(storage: Storage) {
         return new GenericStorageContainer(storage)
     }
