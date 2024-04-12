@@ -40,15 +40,19 @@ export class SecureStorageContainer implements StorageContainerInterface {
         if (!encryptedString) {
             return null
         }
-        const encryptedData = transfromHexStringToArrayBuffer(encryptedString)
-        const decryptKey = getDecryptionKey(this.#keypair)
         try {
-            const decryptedData = await window.crypto.subtle.decrypt(decryptKey.algorithm, decryptKey, encryptedData)
-            const decryptedString = this.#textDecoder.decode(decryptedData)
-            const value = JSON.parse(decryptedString)
-            return value
+            const encryptedData = transfromHexStringToArrayBuffer(encryptedString)
+            const decryptKey = getDecryptionKey(this.#keypair)
+            try {
+                const decryptedData = await window.crypto.subtle.decrypt(decryptKey.algorithm, decryptKey, encryptedData)
+                const decryptedString = this.#textDecoder.decode(decryptedData)
+                const value = JSON.parse(decryptedString)
+                return value
+            } catch {
+                throw new Error("[SecureStorageContainer]: Unable to decrypt the data!")
+            }
         } catch {
-            throw new Error("[SecureStorageContainer]: Unable to decrypt the data!")
+            throw new Error("[SecureStorageContainer]: Unable to decode the data for decryption!")
         }
     }
 
@@ -60,16 +64,20 @@ export class SecureStorageContainer implements StorageContainerInterface {
          * 4. Convert the encrypted data to a hex string
          * 5. Store the encrypted string in the container
          */
-        const transformedValue = JSON.stringify(value)
-        const encodedValue = this.#textEncoder.encode(transformedValue)
-        const encryptKey = getEncryptionKey(this.#keypair)
         try {
-            const encryptedData = await window.crypto.subtle.encrypt(encryptKey.algorithm, encryptKey, encodedValue)
-            const encryptedString = transformArrayBufferToHexString(encryptedData)
-            await this.container.setItem(key, encryptedString)
-            return value
+            const transformedValue = JSON.stringify(value)
+            const encodedValue = this.#textEncoder.encode(transformedValue)
+            const encryptKey = getEncryptionKey(this.#keypair)
+            try {
+                const encryptedData = await window.crypto.subtle.encrypt(encryptKey.algorithm, encryptKey, encodedValue)
+                const encryptedString = transformArrayBufferToHexString(encryptedData)
+                await this.container.setItem(key, encryptedString)
+                return value
+            } catch {
+                throw new Error("[SecureStorageContainer]: Unable to encrypt the data!")
+            }
         } catch {
-            throw new Error("[SecureStorageContainer]: Unable to encrypt the data!")
+            throw new Error("[SecureStorageContainer]: Unable to encode the data for encryption!")
         }
     }
 
