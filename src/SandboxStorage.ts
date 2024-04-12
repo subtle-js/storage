@@ -14,11 +14,12 @@ interface SandboxStorageInterface {
 
     createGenericStorageContainer(storage: Storage): GenericStorageContainer
     /**
-     * Create a new instance of `SecureStorageContainer` class.
+     * Create a new instance of `SecureStorageContainer` class with RSA-OAEP encryption/decryption algorithm.
      * 
      * Available only in secure contexts.
      * 
-     * @param storage 
+     * @param keypair (Requires RSA-OAEP keypair)
+     * @param storage
      * @returns 
      */
     createSecureStorageContainer(keypair: CryptoKeyPair, container: StorageContainerInterface): SecureStorageContainer
