@@ -14,7 +14,7 @@ export class SecureStorageContainer implements StorageContainerInterface {
         keypair: CryptoKeyPair,
         private container: StorageContainerInterface,
     ) {
-        if ("RSA-OAEP" == keypair.privateKey.algorithm.name) {
+        if ("RSA-OAEP" !== keypair.privateKey.algorithm.name) {
             throw new Error("[SecureStorageContainer]: Invalid algorithm! Expected 'RSA-OAEP'")
         }
 
@@ -79,19 +79,5 @@ export class SecureStorageContainer implements StorageContainerInterface {
             this.container.removeItem(key)
         }
         return item
-    }
-}
-
-class RsaOaep {
-    #key: CryptoKeyPair
-    constructor(key: CryptoKeyPair) {
-        this.#key = key
-        console.assert("RSA-OAEP" === key.privateKey.algorithm.name, "[RsaOaep]: Invalid algorithm! Expected 'RSA-OAEP'")
-    }
-    encrypt(data: ArrayBufferLike) {
-        return window.crypto.subtle.encrypt({ name: "RSA-OAEP" }, this.#key.privateKey, data)
-    }
-    decrypt(data: ArrayBufferLike) {
-        return window.crypto.subtle.decrypt({ name: "RSA-OAEP" }, this.#key.privateKey, data)
     }
 }
