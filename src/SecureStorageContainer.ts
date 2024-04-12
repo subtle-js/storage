@@ -5,26 +5,27 @@ import { transformArrayBufferToHexString } from "./utils/transformArrayBufferToH
 import { transfromHexStringToArrayBuffer } from "./utils/transfromHexStringToArrayBuffer"
 
 export class SecureStorageContainer implements StorageContainerInterface {
-    #cryptoKey: CryptoKey | CryptoKeyPair
+    #keypair: CryptoKeyPair
 
     #textEncoder = new TextEncoder()
     #textDecoder = new TextDecoder()
 
     constructor(
-        cryptoKey: CryptoKey | CryptoKeyPair,
+        keypair: CryptoKeyPair,
         private container: StorageContainerInterface,
     ) {
-        if ('privateKey' in cryptoKey && 'publicKey' in cryptoKey) {
-            console.assert(cryptoKey.publicKey.usages.includes("encrypt"), "[SecureStorageContainer]: The Public Key should have 'encrypt' usage!")
-            console.assert(cryptoKey.privateKey.usages.includes("decrypt"), "[SecureStorageContainer]: The Private Key should have 'encrypt' usage!")
-        } else if (cryptoKey instanceof CryptoKey) {
-            console.assert(cryptoKey.usages.includes("encrypt"), "[SecureStorageContainer]: The Encryption Key should have 'encrypt' usage")
-            console.assert(cryptoKey.usages.includes("decrypt"), "[SecureStorageContainer]: The Encryption Key should have 'decrypt' usage")
+        if ("RSA-OAEP" == keypair.privateKey.algorithm.name) {
+            throw new Error("[SecureStorageContainer]: Invalid algorithm! Expected 'RSA-OAEP'")
+        }
+
+        if ('privateKey' in keypair && 'publicKey' in keypair) {
+            console.assert(keypair.publicKey.usages.includes("encrypt"), "[SecureStorageContainer]: The Public Key should have 'encrypt' usage!")
+            console.assert(keypair.privateKey.usages.includes("decrypt"), "[SecureStorageContainer]: The Private Key should have 'encrypt' usage!")
         } else {
             throw new Error("[SecureStorageContainer]: Invalid Crypto Key!")
         }
 
-        this.#cryptoKey = cryptoKey
+        this.#keypair = keypair
     }
 
     async getItem<T = any>(key: string): Promise<T | null> {
@@ -40,7 +41,7 @@ export class SecureStorageContainer implements StorageContainerInterface {
             return null
         }
         const encryptedData = transfromHexStringToArrayBuffer(encryptedString)
-        const decryptKey = getDecryptionKey(this.#cryptoKey)
+        const decryptKey = getDecryptionKey(this.#keypair)
         try {
             const decryptedData = await window.crypto.subtle.decrypt(decryptKey.algorithm, decryptKey, encryptedData)
             const decryptedString = this.#textDecoder.decode(decryptedData)
@@ -61,7 +62,7 @@ export class SecureStorageContainer implements StorageContainerInterface {
          */
         const transformedValue = JSON.stringify(value)
         const encodedValue = this.#textEncoder.encode(transformedValue)
-        const encryptKey = getEncryptionKey(this.#cryptoKey)
+        const encryptKey = getEncryptionKey(this.#keypair)
         try {
             const encryptedData = await window.crypto.subtle.encrypt(encryptKey.algorithm, encryptKey, encodedValue)
             const encryptedString = transformArrayBufferToHexString(encryptedData)
@@ -78,5 +79,19 @@ export class SecureStorageContainer implements StorageContainerInterface {
             this.container.removeItem(key)
         }
         return item
+    }
+}
+
+class RsaOaep {
+    #key: CryptoKeyPair
+    constructor(key: CryptoKeyPair) {
+        this.#key = key
+        console.assert("RSA-OAEP" === key.privateKey.algorithm.name, "[RsaOaep]: Invalid algorithm! Expected 'RSA-OAEP'")
+    }
+    encrypt(data: ArrayBufferLike) {
+        return window.crypto.subtle.encrypt({ name: "RSA-OAEP" }, this.#key.privateKey, data)
+    }
+    decrypt(data: ArrayBufferLike) {
+        return window.crypto.subtle.decrypt({ name: "RSA-OAEP" }, this.#key.privateKey, data)
     }
 }
